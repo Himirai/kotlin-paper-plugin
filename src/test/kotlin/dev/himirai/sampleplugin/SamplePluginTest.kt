@@ -22,22 +22,22 @@ class SamplePluginTest {
 	fun setup() {
 		server = MockBukkit.mock()
 		plugin = MockBukkit.load(SamplePlugin::class.java)
-		plugin.logger.log(Level.INFO, "Server is ready")
+		server.logger.log(Level.INFO, "Server is ready")
 	}
 
 	@Test
-	fun testSpeed() {
+	fun testLevel() {
 		player = server.addPlayer("Himirai")
 		assertTrue(player.level == 100) { notPassed.replace("{test}", "level") }
 		assertFalse(player.level != 100) { notPassed.replace("{test}", "level") }
-		plugin.logger.log(Level.INFO, "All tests passed!")
+		server.logger.log(Level.INFO, "All tests passed!")
 		player.disconnect()
 	}
 
 	@AfterEach
 	fun teardown() {
 		MockBukkit.unmock()
-		plugin.logger.log(Level.INFO, "Server closed")
+		server.logger.log(Level.INFO, "Server closed")
 	}
 
 }
