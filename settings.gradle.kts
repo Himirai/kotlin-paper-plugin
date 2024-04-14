@@ -1,1 +1,1 @@
-rootProject.name = "kotlin-paper-plugin-new"
+rootProject.name = "kotlin-paper-plugin"
