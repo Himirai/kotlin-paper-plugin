@@ -26,7 +26,7 @@ class SamplePluginTest {
 	}
 
 	@Test
-	fun testSpeed() {
+	fun testLevel() {
 		player = server.addPlayer("Himirai")
 		assertTrue(player.level == 100) { notPassed.replace("{test}", "level") }
 		assertFalse(player.level != 100) { notPassed.replace("{test}", "level") }
