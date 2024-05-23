@@ -2,6 +2,9 @@
 <p align="center">
 In this simple project you'll find the template to quickstart your journey into Minecraft plugin 1.19+ development with Kotlin for the Paper server (and many others). This repository offers a starting point template to begin your Minecraft plugin projects efficiently.
 </p>
+<p align="center">
+This project demonstrates some useful things on example (simple plugin which disables join/quit messages and logs them to console)
+</p>
 
 <h3 align="center">But, how to? (all simple i guess)</h3>
 <p align="center">1. Fork this project</p>
