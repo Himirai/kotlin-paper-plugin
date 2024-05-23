@@ -1,18 +1,19 @@
-import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
 
 plugins {
 	kotlin("jvm") version "1.9.21"
 	id("com.github.johnrengelman.shadow") version "8.1.1"
 	id("io.papermc.paperweight.userdev").version("1.5.11")
-	id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
+	id("io.github.patrick.remapper") version "1.4.1"
+	id("xyz.jpenilla.run-paper") version "2.2.3"
 	id("xyz.jpenilla.resource-factory-bukkit-convention") version "1.1.1"
 }
 
 // TODO: change this to your needs
 val mainClassName = "SamplePlugin"
 group = "dev.himirai.${mainClassName.lowercase()}"
-version = "1.0.0-SNAPSHOT"
+version = "1.0.0"
 val internal = "$group.internal"
 
 repositories {
@@ -33,22 +34,19 @@ java {
 	toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
-bukkit {
+bukkitPluginYaml {
 	main = "$group.$mainClassName"
-	apiVersion = "1.19"
-	author = "Himirai"
+	apiVersion = "1.20"
+	authors.add("Himirai")
 	version = project.version.toString()
-	load = BukkitPluginDescription.PluginLoadOrder.POSTWORLD
-//    depend = listOf("WorldEdit")
-//    softDepend = listOf("Vault")
+	load = BukkitPluginYaml.PluginLoadOrder.POSTWORLD
+//    depend.add("WorldEdit")
+//    softDepend.add("Vault")
 }
 
 tasks {
-	test {
-		useJUnitPlatform()
-		testLogging {
-			events("passed", "skipped", "failed")
-		}
+	runServer {
+		version("1.20.4")
 	}
 
 	shadowJar {
@@ -58,8 +56,8 @@ tasks {
 		archiveFileName.set("v${project.version}/$mainClassName.jar")
 	}
 
-	assemble {
-		dependsOn(reobfJar)
+	build {
+		dependsOn(shadowJar)
 	}
 
 	reobfJar {
@@ -70,8 +68,15 @@ tasks {
 		}
 	}
 
-	build {
-		dependsOn(shadowJar)
+	assemble {
+		dependsOn(reobfJar)
+	}
+
+	test {
+		useJUnitPlatform()
+		testLogging {
+			events("passed", "skipped", "failed")
+		}
 	}
 
 	withType<KotlinCompile> {
