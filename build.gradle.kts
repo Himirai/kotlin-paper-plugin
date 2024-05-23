@@ -4,10 +4,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
 	kotlin("jvm") version "1.9.21"
 	id("com.github.johnrengelman.shadow") version "8.1.1"
+	id("io.papermc.paperweight.userdev").version("1.5.11")
 	id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
+	id("xyz.jpenilla.resource-factory-bukkit-convention") version "1.1.1"
 }
 
-// change this to your needs
+// TODO: change this to your needs
 val mainClassName = "SamplePlugin"
 group = "dev.himirai.${mainClassName.lowercase()}"
 version = "1.0.0-SNAPSHOT"
@@ -19,13 +21,12 @@ repositories {
 }
 
 dependencies {
-	compileOnly("io.papermc.paper:paper-api:1.19-R0.1-SNAPSHOT")
-
+	paperweight.paperDevBundle("1.20.4-R0.1-SNAPSHOT")
 	testImplementation(platform("org.junit:junit-bom:5.10.2"))
 	testImplementation("org.junit.jupiter:junit-jupiter")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	testImplementation(kotlin("test"))
-	testImplementation("com.github.seeseemelk:MockBukkit-v1.19:3.0.0")
+	testImplementation("com.github.seeseemelk:MockBukkit-v1.20:3.86.1")
 }
 
 java {
@@ -51,13 +52,22 @@ tasks {
 	}
 
 	shadowJar {
-//        If you need to relocate something, then, uncomment it and paste in list path to folders which should be relocated
-//        val relocations = listOf(
-//            "com"
-//        )
-//        relocations.forEach { relocate(it, "$internal.$it") }
+		val relocations = listOf("org.intellij", "org.jetbrains", "kotlin")
+		relocations.forEach { relocate(it, "$internal.$it") }
 		archiveClassifier.set("")
-		archiveFileName.set("$mainClassName-${project.version}.jar")
+		archiveFileName.set("v${project.version}/$mainClassName.jar")
+	}
+
+	assemble {
+		dependsOn(reobfJar)
+	}
+
+	reobfJar {
+		outputJar.set(layout.buildDirectory.file("libs/v${project.version}/${project.name}-remapped.jar"))
+		doFirst {
+			val versionDir = file("${layout.buildDirectory}/libs/v${project.version}")
+			if (!versionDir.exists()) versionDir.mkdirs()
+		}
 	}
 
 	build {
