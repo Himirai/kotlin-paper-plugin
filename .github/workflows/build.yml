@@ -1,10 +1,16 @@
 name: Build Project
-concurrency: production
+
 on:
   push:
-    branches: [ "production" ]
+    branches:
+      - production
   pull_request:
-    branches: [ "production" ]
+    branches:
+      - production
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -13,18 +19,23 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
+
       - name: Make gradlew Executable
         run: chmod +x ./gradlew
+
       - name: Gradle Build
         run: ./gradlew build
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v3
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v2
         with:
           name: build-artifacts
-          path: build/libs/**/*.jar
+          path: build/libs/
