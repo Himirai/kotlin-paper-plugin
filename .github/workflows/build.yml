@@ -49,6 +49,9 @@ jobs:
           name: build-artifacts
           path: build/libs/
 
+      - name: Make gradlew Executable
+        run: chmod +x ./gradlew
+
       - name: Extract Version
         id: extract_version
         run: |
