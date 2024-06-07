@@ -2,17 +2,20 @@ name: Deploy Jar
 concurrency: production
 
 on:
-  workflow_run:
-    workflows:
-      - "Build Project"
-    types:
-      - completed
+  push:
+    branches-ignore: [ '*' ]
+#  workflow_run:
+#    workflows:
+#      - "Build Project"
+#    types:
+#      - completed
 
 jobs:
   release:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
+    steps:
+      - name: Nothing
+        run: echo "Nothing happened, yay!!"
 
     # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= DOCKER IMAGE PUSH START =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     #      - name: Docker Login                                                                                     #
