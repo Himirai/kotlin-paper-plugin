@@ -65,7 +65,7 @@ jobs:
         id: extract_version
         run: |
           version=$(./gradlew properties -q | grep "^version: " | awk '{print $2}')
-          echo "VERSION=$version" >> $GITHUB_ENV
+          echo "PROJECT_VERSION=$version" >> $GITHUB_ENV
 
       - name: Extract Project Name
         id: extract_project_name
@@ -79,8 +79,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.VERSION }}
-          release_name: ${{ env.PROJECT_NAME }} v(${{ env.VERSION }})
+          tag_name: ${{ env.PROJECT_VERSION }}
+          release_name: ${{ env.PROJECT_NAME }} v(${{ env.PROJECT_VERSION }})
           draft: false
           prerelease: false
 
@@ -90,8 +90,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: build/libs/${{ env.PROJECT_NAME }}-${{ env.VERSION }}.jar
-          asset_name: ${{ env.PROJECT_NAME }}-v${{ env.VERSION }}-sources.jar
+          asset_path: build/libs/v${{ env.PROJECT_VERSION }}/${{ env.PROJECT_NAME }}-sources.jar
+          asset_name: ${{ env.PROJECT_NAME }}-v${{ env.PROJECT_VERSION }}-sources.jar
           asset_content_type: application/java-archive
 
       - name: Upload remapped JAR to Release
@@ -100,8 +100,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: build/libs/${{ env.PROJECT_NAME }}-${{ env.VERSION }}-remapped.jar
-          asset_name: ${{ env.PROJECT_NAME }}-v${{ env.VERSION }}.jar
+          asset_path: build/libs/v${{ env.PROJECT_VERSION }}/${{ env.PROJECT_NAME }}-remapped.jar
+          asset_name: ${{ env.PROJECT_NAME }}-v${{ env.PROJECT_VERSION }}.jar
           asset_content_type: application/java-archive
   deploy:
     needs: build
