@@ -80,7 +80,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ env.PROJECT_VERSION }}
-          release_name: ${{ env.PROJECT_NAME }} v(${{ env.PROJECT_VERSION }})
+          release_name: v.(${{ env.PROJECT_VERSION }})
           draft: false
           prerelease: false
 
