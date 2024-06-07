@@ -41,23 +41,6 @@ bukkitPluginYaml {
 //    softDepend.add("Vault")
 }
 
-fun getProjectSource(project: Project): Array<File> {
-	return if (project.subprojects.isEmpty()) project.sourceSets.main.get().allSource.srcDirs.toTypedArray()
-	else ArrayList<File>().apply {
-		project.subprojects.forEach {
-			addAll(getProjectSource(it))
-		}
-	}.toTypedArray()
-}
-
-val sourcesJar by tasks.creating(Jar::class.java) {
-	dependsOn(tasks.classes)
-	archiveClassifier.set("")
-	archiveFileName.set("v${project.version}/${project.name}-sources.jar")
-	from(*getProjectSource(project))
-	duplicatesStrategy = DuplicatesStrategy.INCLUDE
-}
-
 tasks {
 	runServer {
 		version("1.20.4")
@@ -68,29 +51,20 @@ tasks {
 		}
 	}
 
-	jar {
-		dependsOn(clean)
-		finalizedBy(shadowJar)
-	}
-
 	shadowJar {
 		val relocations = listOf("org.intellij", "org.jetbrains", "kotlin")
 		relocations.forEach { relocate(it, "$internal.$it") }
 		archiveClassifier.set("")
 		archiveFileName.set("v${project.version}/${project.name}.jar")
-		finalizedBy(sourcesJar)
 	}
 
 	build {
-		dependsOn(shadowJar)
+		dependsOn(reobfJar)
 	}
 
 	reobfJar {
+		dependsOn(shadowJar)
 		outputJar.set(layout.buildDirectory.file("libs/v${project.version}/${project.name}-remapped.jar"))
-		doFirst {
-			val versionDir = file("${layout.buildDirectory}/libs/v${project.version}")
-			if (!versionDir.exists()) versionDir.mkdirs()
-		}
 	}
 
 	assemble {
@@ -103,6 +77,10 @@ afterEvaluate {
 		publications {
 			create<MavenPublication>("maven") {
 				from(components["java"])
+				artifactId = project.name
+				artifact(tasks.shadowJar.get().archiveFile) {
+					classifier = ""
+				}
 			}
 		}
 	}
