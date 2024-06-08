@@ -84,16 +84,6 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Upload sources JAR to Release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: build/libs/v${{ env.PROJECT_VERSION }}/${{ env.PROJECT_NAME }}-sources.jar
-          asset_name: ${{ env.PROJECT_NAME }}-v${{ env.PROJECT_VERSION }}-sources.jar
-          asset_content_type: application/java-archive
-
       - name: Upload remapped JAR to Release
         uses: actions/upload-release-asset@v1
         env:
